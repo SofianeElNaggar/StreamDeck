@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page avec Boutons et Menu</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="cont-btn">
+            <button class="btn-actualiser" id="button-actualiser" onclick="clic(this.id)">Actualiser</button>
+            <button class="btn-reset" id="reset" onclick="clic(this.id)">Reset</button>
+        </div>
+        <h1 class="title">S-Deck</h1>
+        <div class="Boutons">
+            <button class="button" id="button1" ondrop="drop(event)" ondragover="allowDrop(event)"
+                onclick="clic(this.id)">button1</button>
+            <button class="button" id="button2" ondrop="drop(event)" ondragover="allowDrop(event)"
+                onclick="clic(this.id)">button2</button>
+            <button class="button" id="button3" ondrop="drop(event)" ondragover="allowDrop(event)"
+                onclick="clic(this.id)">button3</button>
+            <button class="button" id="button4" ondrop="drop(event)" ondragover="allowDrop(event)"
+                onclick="clic(this.id)">button4</button>
+            <button class="button" id="button5" ondrop="drop(event)" ondragover="allowDrop(event)"
+                onclick="clic(this.id)">button5</button>
+            <button class="button" id="button6" ondrop="drop(event)" ondragover="allowDrop(event)"
+                onclick="clic(this.id)">button6</button>
+        </div>
+    </div>
+    <div class="menu">
+        <h2 class="titleMenu">Menu</h2>
+        <!--<p class="path">Chemin</p>
+        -->
+            <div class="containerC">
+            <ul id="ul-containerC">
+                <li class="btn">
+                    <button id="option1" draggable="true" ondragstart="drag(event)">brightness up</button>
+                </li>
+                <li class="btn">
+                    <button id="option2" draggable="true" ondragstart="drag(event)">brightness down</button>
+                </li>
+                <li class="btn">
+                    <button id="option3" draggable="true" ondragstart="drag(event)">Volume up</button>
+                </li>
+                <li class="btn">
+                    <button id="option4" draggable="true" ondragstart="drag(event)">Volume down</button>
+                </li>
+                <li class="btn2">
+                    <button id="option6">Fermer</button>
+                </li> 
+                <li class="btn" id="newButton">
+                    <button id="option7" draggable="true" ondragstart="drag(event)"
+                        onclick="openPopup(`newButton`);">new buttons</button>
+                </li>
+                <li class="btn">
+                    <button id="option8" draggable="true" ondragstart="drag(event)"
+                        onclick="openPopup(`File`);">File</button>
+                </li>
+                <li class="btn">
+                    <button id="option10" draggable="true" ondragstart="drag(event)"
+                        onclick="openPopup(`Web`);">Web</button>
+                </li>
+                <li class="btn">
+                    <button id="option12" draggable="true" ondragstart="drag(event)">Screenshot</button>
+                </li>
+                <li class="btn">
+                    <button id="option13" draggable="true" ondragstart="drag(event)">>||</button>
+                </li>
+                <li class="btn">
+                    <button id="option14" draggable="true" ondragstart="drag(event)">>|</button>
+                </li>
+                <li class="btn">
+                    <button id="option15" draggable="true" ondragstart="drag(event)">|&lt;</button>
+                </li>
+                <li class="btn">
+                    <button id="option16" draggable="true" ondragstart="drag(event)"
+                        onclick="openPopup(`Raccourci`);">Raccourci</button>
+                </li>
+            </ul>
+
+            <div id="app1List"
+                style="display: none; z-index: 1;position: absolute; max-height: 200px; overflow-y: auto; border: 1px solid #ccc; margin-left: 10px; border-radius: 5px; background-color: #ccc;">
+            </div>
+        </div>
+    </div>
+    <script>
+
+        const button1 = document.getElementById("button1");
+        const button2 = document.getElementById("button2");
+        const button3 = document.getElementById("button3");
+        const button4 = document.getElementById("button4");
+        const button5 = document.getElementById("button5");
+        const button6 = document.getElementById("button6");
+
+        const option1 = document.getElementById("option1");
+        const option2 = document.getElementById("option2");
+        const option3 = document.getElementById("option3");
+        const option4 = document.getElementById("option4");
+        const option5 = document.getElementById("option5");
+        const option6 = document.getElementById("option6");
+        const option7 = document.getElementById("option7");
+        const option8 = document.getElementById("option8");
+        const option9 = document.getElementById("option9");
+        const option10 = document.getElementById("option10");
+        const option11 = document.getElementById("option11");
+        const option12 = document.getElementById("option12");
+        const option13 = document.getElementById("option13");
+        const option14 = document.getElementById("option14");
+        const option15 = document.getElementById("option15");
+        const option16 = document.getElementById("option16");
+
+
+        const app1ListDiv = document.getElementById("app1List");
+        const nameList = document.getElementById("nameList");
+
+        var newButton = document.getElementById("newButton");
+        var niveau2DejaAtteint = 0;
+
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.innerText);
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            const boutonID = event.dataTransfer.mozSourceNode.id;
+            event.target.data = boutonID;
+            event.target.textContent = event.dataTransfer.mozSourceNode.textContent;
+            const text = event.target.textContent;
+
+            if (text.startsWith("Web:")) {
+                const optionContent = document.getElementById("option10").getAttribute("option")
+                console.log(1)
+                const jsonData = { action: "drop", button: `${event.target.id}`, text: "Web", option: optionContent };
+                send(jsonData);
+            } else if (text.startsWith("File:")) {
+                const optionContent = document.getElementById("option8").getAttribute("option")
+                const jsonData = { action: "drop", button: `${event.target.id}`, text: "File", option: optionContent };
+                send(jsonData);
+            } else if (text.startsWith("Raccourci:")) {
+                const optionContent = document.getElementById("option16").getAttribute("option")
+                const jsonData = { action: "drop", button: `${event.target.id}`, text: "Raccourci", option: optionContent };
+                send(jsonData);
+            } else if (text.startsWith("new buttons:")) {
+                const optionContent = document.getElementById("option7").getAttribute("option")
+                const jsonData = { action: "drop", button: `${event.target.id}`, text: "new buttons", option: optionContent };
+                send(jsonData);
+            } else {
+                const jsonData = { action: "drop", button: `${event.target.id}`, text: text, option: `default` };
+                send(jsonData);
+            }
+
+        }
+
+        function clic(id) {
+            var butt = document.getElementById(id);
+            var selectedApp = butt.textContent;
+
+            const jsonData = { action: "clic", button: `${id}` };
+
+            send(jsonData);
+        }
+
+        function openPopup(option) {
+            // Créer un élément popup
+            const popup = document.createElement("div");
+            popup.id = "shortcut-popup";
+            popup.style.display = "block";
+            popup.style.position = "fixed";
+            popup.style.top = "50%";
+            popup.style.left = "50%";
+            popup.style.transform = "translate(-50%, -50%)";
+            popup.style.backgroundColor = "white";
+            popup.style.padding = "20px";
+            popup.style.borderRadius = "5px";
+
+            var content;
+            var currentOptionStr;
+            var currentOption;
+            var msg;
+
+            if (option === "Raccourci") {
+
+                // Contenu de la popup
+                content = `
+                <h3>Créer un raccourci clavier</h3>
+                <p>Entrez le raccourci clavier que vous souhaitez utiliser (ex: CTRL+C):</p>
+                <input type="text" id="shortcut-input" placeholder="Raccourci clavier">
+                <button id="shortcut-submit">Valider</button>
+                `;
+
+                currentOptionStr = "option16";
+                msg = "Raccourci";
+                currentOption = option16;
+
+            } else if (option === "Web"){
+                content = `
+                <h3>Choisir une page web</h3>
+                <p>Entrez la page web que vous voulez ouvire</p>
+                <input type="text" id="shortcut-input" placeholder="Lien web">
+                <button id="shortcut-submit">Valider</button>
+                `;
+
+                currentOptionStr = "option10"
+                msg = "Web"
+                currentOption = option10;
+            } else if (option === "File"){
+                content = `
+                <h3>Ouvrir un fichier</h3>
+                <p> Saisissez le chemin d'accès du fichier à ouvrir</p>
+                <input type="text" id="shortcut-input" placeholder="Chemin du fichier">
+                <button id="shortcut-submit">Valider</button>
+                `;
+
+                currentOptionStr = "option8"
+                msg = "File"
+                currentOption = option8;
+            } else if (option === "newButton"){
+                content = `
+                <h3>Nom du bouton</h3>
+                <input type="text" id="shortcut-input" placeholder="Nom">
+                <button id="shortcut-submit">Valider</button>
+                `;
+
+                currentOptionStr = "option7"
+                msg = "new buttons"
+                currentOption = option7;
+            }
+
+            popup.innerHTML = content;
+
+            // Ajout de la popup au document
+            document.body.appendChild(popup);
+
+            // Fonction pour fermer la popup
+            function closePopup() {
+                popup.parentNode.removeChild(popup);
+            }
+
+            // Fonction pour modifier le bouton "Raccourci"
+            function updateShortcutButton(optionValue) {
+                const shortcutText = `${msg}: ${optionValue}`;
+                const buttonText = document.getElementById(currentOptionStr).textContent;
+                document.getElementById(currentOptionStr).textContent = shortcutText;
+                // Modifier l'option du bouton
+                currentOption.setAttribute("option", optionValue);
+            }
+
+            // Ecouter l'événement "click" sur le bouton de validation
+            const submitButton = document.getElementById("shortcut-submit");
+            submitButton.addEventListener("click", () => {
+                const shortcutInput = document.getElementById("shortcut-input");
+                const optionValue = shortcutInput.value;
+
+                // Enregistrer le raccourci clavier dans la variable "option"
+                const option = optionValue;
+
+                // Envoyer les données au serveur (implémentez la logique de votre serveur)
+
+                // Fermer la popup
+                closePopup();
+
+                // Mettre à jour le bouton "Raccourci" avec le raccourci saisi
+                updateShortcutButton(optionValue);
+            });
+
+            // Ecouter l'événement "click" sur l'extérieur de la popup pour la fermer
+            popup.addEventListener("click", (event) => {
+                if (event.target === popup) {
+                    closePopup();
+                }
+            });
+        }
+
+        function send(jsonData) {
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Réponse du serveur :', data);
+                    console.log('Level :', data.level[0]);
+
+                    if (data.option[0] !== null) {
+                        button1.textContent = data.buttonsValues[0] + ": " + data.option[0];
+                    } else {
+                        button1.textContent = data.buttonsValues[0];
+                    }
+                    if (data.option[1] !== null) {
+                        button2.textContent = data.buttonsValues[1] + ": " + data.option[1];
+                    } else {
+                        button2.textContent = data.buttonsValues[1];
+                    }
+                    if (data.option[2] !== null) {
+                        button3.textContent = data.buttonsValues[2] + ": " + data.option[2];
+                    } else {
+                        button3.textContent = data.buttonsValues[2];
+                    }
+                    if (data.option[3] !== null) {
+                        button4.textContent = data.buttonsValues[3] + ": " + data.option[3];
+                    } else {
+                        button4.textContent = data.buttonsValues[3];
+                    }
+                    if (data.option[4] !== null) {
+                        button5.textContent = data.buttonsValues[4] + ": " + data.option[4];
+                    } else {
+                        button5.textContent = data.buttonsValues[4];
+                    }
+
+                    if (data.level[0] == 0) {
+                        if (data.option[5] !== null) {
+                            button6.textContent = data.buttonsValues[5] + ": " + data.option[5];
+                        } else {
+                            button6.textContent = data.buttonsValues[5];
+                        }
+                    } else {
+                        button6.textContent = "Retour"
+                    }
+
+
+                    if (data.level[0] == 2) {
+                        newButton.parentNode.removeChild(newButton);
+                        niveau2DejaAtteint = 1;
+                    }
+                    if (data.level[0] != 2 && niveau2DejaAtteint == 1) {
+                        console.log(1)
+                        document.getElementById("btnFile").parentNode.insertBefore(newButton, document.getElementById("btnFile"))
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de l\'envoi des données :', error);
+                });
+        }
+    </script>
+</body>
+
+</html>
